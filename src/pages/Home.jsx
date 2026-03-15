@@ -3,7 +3,7 @@ import LoginPage from "../pages/LoginPage";
 import { Outlet } from "react-router-dom";
 const Home = () => {
   return (
-    <div className="">
+    <div className="px-2 py-2">
       <Outlet />
     </div>
   );

@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import LoginPage from "./pages/LoginPage";
 import auth from "./appwrite/auth";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "./redux/profileSlice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import FloatingNavbar from "./components/FloatingNavbar";
 
 const App = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const { loginStatus } = useSelector((state) => state.profileSlice);
-  console.log(loginStatus);
+  const navigate = useNavigate();
   const currentUserSession = async () => {
     try {
       setLoading(true);
       const user = await auth.getCurrentUser();
-      if (user) dispatch(logIn(user));
-      console.log(user);
+      if (user) {
+        dispatch(logIn(user));
+        navigate("/home/dashboard");
+      }
     } catch (error) {
-      setLoading(false);
-      console.log(error);
+      console.log("No active session");
     } finally {
       setLoading(false);
     }
@@ -38,15 +40,21 @@ const App = () => {
       </div>
     : <>
         <Toaster />
-        <div className="w-full min-h-screen flex flex-col gap-4 bg-[#f4f4f7]">
+
+        <div className="relative w-full min-h-screen flex flex-col gap-4 bg-[#f4f4f7]">
           <header>
             <NavBar />
           </header>
-          <section className="">
-            {loginStatus ?
-              <Home />
-            : <LoginPage />}
+
+          <section className="pb-20">
+            <Home />
           </section>
+
+          {loginStatus && (
+            <section className="fixed bottom-0 w-full">
+              <FloatingNavbar />
+            </section>
+          )}
         </div>
       </>;
 };

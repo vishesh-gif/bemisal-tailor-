@@ -1,23 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import InputField from "../utils/InputField";
 import { SlEnvolope } from "react-icons/sl";
 import { TiLockClosed } from "react-icons/ti";
 import { useForm } from "react-hook-form";
 import auth from "../appwrite/auth";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { logIn } from "../redux/profileSlice";
+import { useNavigate } from "react-router-dom";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm();
-  const onSubmit = async (data) => {
+  const handleLogin = async (data) => {
     try {
-      const account = await auth.login(data);
-      if (account) toast.success("logged IN");
-      console.log(account);
+      setLoading(true);
+      const session = await auth.login(data);
+
+      if (session) {
+        const user = await auth.getCurrentUser();
+        dispatch(logIn(user));
+        setLoading(false);
+        navigate("/home/dashboard");
+        toast.success("Logged in successfully");
+      }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -27,7 +43,7 @@ const LoginPage = () => {
           Login
         </h1>
 
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-4" onSubmit={handleSubmit(handleLogin)}>
           <InputField
             label={
               <span className="flex items-center gap-1">
@@ -60,7 +76,11 @@ const LoginPage = () => {
             type="submit"
             className="w-full bg-[#3171c9] text-white py-3 rounded-lg font-semibold hover:bg-[#1e61c0] transition"
           >
-            LOGIN
+            {loading ?
+              <span className="text-center">
+                <AiOutlineLoading3Quarters className="text-4xl animate-spin text-white m-auto" />
+              </span>
+            : "LOGIN"}
           </button>
         </form>
       </div>
