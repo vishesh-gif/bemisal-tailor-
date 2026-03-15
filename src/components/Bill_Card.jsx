@@ -8,7 +8,7 @@ const Bill_Card = ({ data }) => {
       <h3 className="text-xl mb-2 font-semibold border-b border-gray-200">
         Bill# <span className="text-blue-600">{data?.billNumber}</span>
       </h3>
-      <p className="text-md font-semibold text-black">Amit Verma</p>
+      <p className="text-md font-semibold text-black">{data?.name}</p>
       <p className="text-md font-semibold text-gray-700 flex items-center">
         <span className="text-sm">
           <FaPhone />
