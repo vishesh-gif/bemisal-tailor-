@@ -101,8 +101,7 @@ const Dashboard = () => {
           <InputField
             label="Photo"
             type="file"
-            accept="image/*"
-            capture="environment"
+            accept="image/*,.jpg,.jpeg,.png"
             onChange={handleImage}
           />
           {compressedImage && (
