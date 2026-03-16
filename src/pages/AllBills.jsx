@@ -7,6 +7,7 @@ import Popup_Image from "../components/Popup_Image";
 const AllBills = () => {
   const userId = useSelector((state) => state.profileSlice?.userData?.$id);
   const [data, setData] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const allBills = async () => {
     try {
       const customersData = await customerService.get_Customers_detail(userId);
@@ -21,19 +22,24 @@ const AllBills = () => {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="">
       <h1
         className="text-2xl text-center bg-white
       rounded py-1 font-semibold text-gray-800 mb-4"
       >
         All Bills
       </h1>
-      <div className="absolute z-50">
-        <Popup_Image />
-      </div>
+      {selectedImage && (
+        <Popup_Image
+          image={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
       <section className="flex flex-col gap-4">
         {data && data.length > 0 ?
-          data.map((el) => <Bill_Card key={el.$id} data={el} />)
+          data.map((el) => (
+            <Bill_Card key={el.$id} data={el} openImage={setSelectedImage} />
+          ))
         : <div className="text-center">No Data Found</div>}
       </section>
     </div>
