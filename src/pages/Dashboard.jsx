@@ -8,9 +8,11 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import storageService from "../appwrite/storageService";
 import { addBillImage } from "../redux/bill_image_Slice";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Dashboard = () => {
   const userId = useSelector((state) => state.profileSlice?.userData?.$id);
+  const [loading, setLoading] = useState(false);
   const [compressedImage, setCompressedImage] = useState(null);
   const {
     register,
@@ -22,22 +24,26 @@ const Dashboard = () => {
   const handleImage = async (event) => {
     const file = event.target.files[0];
     const options = {
-      maxSizeMB: 0.3,
+      maxSizeMB: 0.2,
       maxWidthOrHeight: 800,
       useWebWorker: true,
     };
     try {
+      setLoading(true);
       const compressedFile = await imageCompression(file, options);
       const compressedRealFile = new File([compressedFile], file.name, {
         type: compressedFile.type,
       });
       setCompressedImage(compressedRealFile);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       if (!compressedImage) {
         toast.error("Please upload a bill image");
@@ -53,8 +59,11 @@ const Dashboard = () => {
       if (createCustomer) toast.success("Customer added");
       reset();
       setCompressedImage(null);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,21 +77,18 @@ const Dashboard = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <InputField
-            label="Bill Number"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Enter bill number"
-            {...register("billNumber", {
-              required: "billNumber is required",
-            })}
-          />
-
-          <InputField
             label="Customer Name"
             placeholder="Enter customer name"
             {...register("name", {
               required: "Customer Name is required",
+            })}
+          />
+          <InputField
+            label="Bill Number"
+            type="text"
+            placeholder="Enter bill number"
+            {...register("billNumber", {
+              required: "billNumber is required",
             })}
           />
 
@@ -114,12 +120,14 @@ const Dashboard = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#3171c9] text-white py-2 rounded-lg font-semibold hover:bg-[#1e61c0] transition"
+            disabled={loading}
+            className={`w-full bg-[#3171c9] text-white py-2 rounded-lg font-semibold hover:bg-[#1e61c0] transition ${loading ? "cursor-not-allowed opacity-80" : ""}`}
           >
-            SAVE BILL
+            {loading ?
+              <AiOutlineLoading3Quarters className="text-4xl animate-spin text-white m-auto" />
+            : "SAVE BILL"}
           </button>
         </form>
-        {/* <img src={URL.createObjectURL(compressedImage)} alt="" width="200" /> */}
       </div>
     </div>
   );
