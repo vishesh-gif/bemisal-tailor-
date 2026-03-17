@@ -19,24 +19,49 @@ const Dashboard = () => {
     formState: { isSubmitting },
   } = useForm();
 
-  const handleImage = async (event) => {
-    const file = event.target.files[0];
-    const options = {
-      maxSizeMB: 0.2,
-      maxWidthOrHeight: 800,
-      useWebWorker: true,
-    };
+  const handleImage = async (e) => {
+    setLoading(true);
+    const file = e.target.files[0];
+    const imageUrl = await uploadImage(file);
+    if (imageUrl) setLoading(false);
+  };
+
+  const uploadImage = async (file) => {
     try {
       setLoading(true);
+      // 🔹 Compress image first
+      const options = {
+        maxSizeMB: 0.2, // 200KB
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      };
+
       const compressedFile = await imageCompression(file, options);
-      const compressedRealFile = new File([compressedFile], file.name, {
-        type: compressedFile.type,
-      });
-      setCompressedImage(compressedRealFile);
+
+      // 🔹 Upload compressed image
+      const formData = new FormData();
+      formData.append("file", compressedFile);
+      formData.append("upload_preset", "my_unsigned_preset");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dlc935yfl/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error?.message || "Upload failed");
+      }
+
+      setCompressedImage(data);
       setLoading(false);
     } catch (error) {
-      setLoading(false);
-      console.log(error);
+      console.log("Error:", error);
+      return null;
     }
   };
 
@@ -47,12 +72,11 @@ const Dashboard = () => {
         toast.error("Please upload a bill image");
         return;
       }
-      const uploadBillImage =
-        await storageService.upload_Bill_Image(compressedImage);
-      if (!uploadBillImage) return;
+
       const createCustomer = customerService.create_Customer(userId, {
         ...data,
-        bill_image_id: uploadBillImage.$id,
+        bill_image_id: compressedImage.secure_url,
+        public_id: compressedImage.public_id,
       });
       if (createCustomer) toast.success("Customer added");
       reset();
@@ -109,11 +133,7 @@ const Dashboard = () => {
             onChange={handleImage}
           />
           {compressedImage && (
-            <img
-              src={URL.createObjectURL(compressedImage)}
-              alt=""
-              width="200"
-            />
+            <img src={compressedImage.secure_url} alt="" width="200" />
           )}
 
           <button

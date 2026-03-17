@@ -8,39 +8,40 @@ import customerService from "../appwrite/customerService";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { deleteCustomer } from "../redux/customers_data_slice";
+
 const Bill_Card = ({ data, openImage }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
   const handleClick = async () => {
     setLoading(true);
+    openImage(data?.bill_image_id);
+    setLoading(false);
+  };
+
+  const deleletBillImg = async (public_id) => {
     try {
-      const img = await storageService.get_Bill_Image(data.bill_image_id);
-      if (img) openImage(img);
-      setLoading(false);
+      const res = await fetch("/.netlify/functions/delete-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ public_id }),
+      });
+
+      const text = await res.text(); // safer
+      const data = text ? JSON.parse(text) : null;
+
+      console.log("Deleted:", data);
     } catch (error) {
       console.log(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const deleletBillImg = async () => {
-    if (!data.bill_image_id) return;
-    const deleteImg = await storageService.delete_Bill_Image(
-      data.bill_image_id,
-    );
-    return deleteImg;
-  };
-
   const handleDelete = async () => {
-    if (
-      confirm(
-        "Are you sure you want to delete this item? This action cannot be undone.",
-      )
-    ) {
+    if (confirm("Are you sure you want to delete this item?")) {
       try {
-        deleletBillImg();
+        deleletBillImg(data.public_id);
         const customerDetails_Delete = await customerService.delete_Customer(
           data.$id,
         );

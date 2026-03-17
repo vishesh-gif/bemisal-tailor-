@@ -4,6 +4,7 @@ import { ID, Query } from "appwrite";
 
 const customerService = {
   async create_Customer(userId, data) {
+    console.log(data);
     try {
       return databases.createDocument(
         DATABASE_ID,
@@ -14,6 +15,7 @@ const customerService = {
           phoneNumber: data.phoneNumber,
           billNumber: data.billNumber,
           bill_image_id: data.bill_image_id,
+          public_id: data.public_id,
           userId: userId,
         },
       );

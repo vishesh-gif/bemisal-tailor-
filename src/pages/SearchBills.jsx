@@ -61,7 +61,7 @@ const SearchBills = () => {
             {/* Button */}
             <button
               type="button"
-              disabled="true"
+              disabled
               className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg m-1 transition flex items-center gap-2"
             >
               <LuCalendarSearch className="text-lg" />

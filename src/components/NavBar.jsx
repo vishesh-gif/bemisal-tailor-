@@ -1,11 +1,12 @@
 import React from "react";
 import { MdLogout } from "react-icons/md";
 import auth from "../appwrite/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../redux/profileSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 const NavBar = () => {
+  const { loginStatus } = useSelector((state) => state.profileSlice);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = async () => {
@@ -26,11 +27,13 @@ const NavBar = () => {
       <h1 className="text-2xl font-semibold">BEMISAL TAILOR</h1>
       <p>Bill Entry System</p>
 
-      <div className="absolute right-3 top-3">
-        <button onClick={() => handleClick()} className="cursor-pointer">
-          <MdLogout className="text-2xl" />
-        </button>
-      </div>
+      {loginStatus && (
+        <div className="absolute right-3 top-3">
+          <button onClick={() => handleClick()} className="cursor-pointer">
+            <MdLogout className="text-2xl" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
