@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import InputField from "../utils/InputField";
 import { useForm } from "react-hook-form";
 import imageCompression from "browser-image-compression";
-import Bill_Image from "../components/Bill_Image";
 import customerService from "../appwrite/customerService";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import storageService from "../appwrite/storageService";
-import { addBillImage } from "../redux/bill_image_Slice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Dashboard = () => {

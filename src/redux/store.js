@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import profileReducer from "./profileSlice";
-import bill_image_Reducer from "./bill_image_Slice";
+import customers_data_Reducer from "./customers_data_slice";
 const store = configureStore({
   reducer: {
     profileSlice: profileReducer,
-    bill_image_slice: bill_image_Reducer,
+    customers_data_Slice: customers_data_Reducer,
   },
 });
 

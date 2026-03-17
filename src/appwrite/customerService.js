@@ -61,6 +61,25 @@ const customerService = {
       throw error;
     }
   },
+  async search_Customer(mobile, billNo) {
+    try {
+      let queries = [];
+      if (mobile) {
+        queries.push(Query.equal("mobile", mobile));
+      }
+      if (billNo) {
+        queries.push(Query.equal("billNo", billNo));
+      }
+
+      return await databases.listDocuments(
+        DATABASE_ID,
+        BILL_INFORMATION,
+        queries,
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default customerService;

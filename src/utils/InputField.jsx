@@ -11,6 +11,7 @@ const InputField = React.forwardRef(
       capture,
       inputMode,
       pattern,
+      inputClass,
       ...props
     },
     ref,
@@ -29,7 +30,7 @@ const InputField = React.forwardRef(
           placeholder={placeholder}
           inputMode={inputMode}
           pattern={pattern}
-          className="border placeholder:text-sm placeholder:font-semibold placeholder:text-[#768290] border-[#a9aaac] rounded-md px-3 py-2 focus:outline-none focus:border-0 focus:ring-2 focus:ring-[#3171c9]"
+          className={`${inputClass} border placeholder:text-sm placeholder:font-semibold placeholder:text-[#768290] border-[#a9aaac] rounded-md px-3 py-2 focus:outline-none focus:border-0 focus:ring-2 focus:ring-[#3171c9] `}
           {...props}
         />
       </div>
