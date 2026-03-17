@@ -22,7 +22,7 @@ const auth = {
 
   async logout() {
     try {
-      await account.deleteSession("current");
+      return await account.deleteSession("current");
     } catch (error) {
       console.error("AuthService :: logout :: error", error.message);
     }

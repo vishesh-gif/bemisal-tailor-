@@ -1,11 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../utils/InputField";
 import { LuCalendarSearch } from "react-icons/lu";
+import customerService from "../appwrite/customerService";
+import Bill_Card from "../components/Bill_Card";
+import toast from "react-hot-toast";
+import Popup_Image from "../components/Popup_Image";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const SearchBills = () => {
   const [input, setInput] = useState("");
-  const handleClick = () => {
-    
-  };
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    if (!input) {
+      setData(null);
+      return;
+    }
+    setLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const customerDetails = await customerService.search_Customer(input);
+        if (!customerDetails) toast.error("No Customer found");
+        setData(customerDetails.documents);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [input]);
 
   return (
     <div>
@@ -15,7 +39,13 @@ const SearchBills = () => {
       >
         Search Bills
       </h1>
-      <section>
+      {selectedImage && (
+        <Popup_Image
+          image={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
+      )}
+      <section className="mb-4">
         <div className="w-full max-w-xl mx-auto">
           <div className="flex items-center bg-white border border-gray-300 rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition">
             {/* Input */}
@@ -31,7 +61,7 @@ const SearchBills = () => {
             {/* Button */}
             <button
               type="button"
-              onClick={() => handleClick()}
+              disabled="true"
               className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg m-1 transition flex items-center gap-2"
             >
               <LuCalendarSearch className="text-lg" />
@@ -39,6 +69,21 @@ const SearchBills = () => {
             </button>
           </div>
         </div>
+      </section>
+      <section className=" flex flex-col gap-4">
+        {data && data.length > 0 ?
+          data.map((el) => (
+            <Bill_Card key={el.$id} data={el} openImage={setSelectedImage} />
+          ))
+        : <div className="text-center">
+            {input && loading ?
+              <div className="w-full my-10 flex flex-col items-center justify-center gap-3">
+                <AiOutlineLoading3Quarters className="text-4xl animate-spin text-blue-600" />
+                <p className="text-gray-500">Loading...</p>
+              </div>
+            : "No Data Found"}
+          </div>
+        }
       </section>
     </div>
   );

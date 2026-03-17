@@ -22,6 +22,8 @@ const App = () => {
       if (user) {
         dispatch(logIn(user));
         navigate("/home/dashboard");
+      } else {
+        navigate("/login");
       }
     } catch (error) {
       console.log("No active session");

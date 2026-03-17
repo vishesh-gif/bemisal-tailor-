@@ -61,21 +61,19 @@ const customerService = {
       throw error;
     }
   },
-  async search_Customer(mobile, billNo) {
+  async search_Customer(phoneNumber) {
     try {
-      let queries = [];
-      if (mobile) {
-        queries.push(Query.equal("mobile", mobile));
-      }
-      if (billNo) {
-        queries.push(Query.equal("billNo", billNo));
-      }
+      // let queries = [];
+      // if (mobile) {
+      //   queries.push(Query.equal("mobile", mobile));
+      // }
+      // if (billNo) {
+      //   queries.push(Query.equal("billNo", billNo));
+      // }
 
-      return await databases.listDocuments(
-        DATABASE_ID,
-        BILL_INFORMATION,
-        queries,
-      );
+      return await databases.listDocuments(DATABASE_ID, BILL_INFORMATION, [
+        Query.startsWith("phoneNumber", phoneNumber),
+      ]);
     } catch (error) {
       console.log(error);
     }

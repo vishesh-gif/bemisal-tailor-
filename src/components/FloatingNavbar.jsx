@@ -9,7 +9,13 @@ const FloatingNavbar = () => {
     <div className="fixed bottom-0 w-full bg-white border-t border-gray-300 shadow-lg flex justify-around py-2">
       <NavLink
         to="/home/dashboard"
-        className="flex flex-col items-center text-gray-600 text-sm"
+        className={({ isActive }) =>
+          `flex flex-col items-center text-sm transition ${
+            isActive ?
+              "text-blue-600 font-semibold scale-105"
+            : "text-gray-600 hover:text-gray-800"
+          }`
+        }
       >
         <IoMdHome className="text-xl" />
         Add Bill
@@ -17,7 +23,13 @@ const FloatingNavbar = () => {
 
       <NavLink
         to="/home/search-bills"
-        className="flex flex-col items-center text-gray-600 text-sm"
+        className={({ isActive }) =>
+          `flex flex-col items-center text-sm transition ${
+            isActive ?
+              "text-blue-600 font-semibold scale-105"
+            : "text-gray-600 hover:text-gray-800"
+          }`
+        }
       >
         <IoIosSearch className="text-xl" />
         Search
@@ -25,7 +37,13 @@ const FloatingNavbar = () => {
 
       <NavLink
         to="/home/all-bills"
-        className="flex flex-col items-center text-gray-600 text-sm"
+        className={({ isActive }) =>
+          `flex flex-col items-center text-sm transition ${
+            isActive ?
+              "text-blue-600 font-semibold scale-105"
+            : "text-gray-600 hover:text-gray-800"
+          }`
+        }
       >
         <RiContactsBook2Fill className="text-xl" />
         Records
