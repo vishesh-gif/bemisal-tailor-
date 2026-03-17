@@ -130,10 +130,11 @@ const Dashboard = () => {
             label="Photo"
             type="file"
             accept="image/*,.jpg,.jpeg,.png"
+            capture="environment"
             onChange={handleImage}
           />
           {compressedImage && (
-            <img src={compressedImage.secure_url} alt="" width="200" />
+            <img src={compressedImage.secure_url} alt="" width="250" />
           )}
 
           <button
