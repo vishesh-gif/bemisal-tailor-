@@ -5,7 +5,6 @@ import imageCompression from "browser-image-compression";
 import customerService from "../appwrite/customerService";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import storageService from "../appwrite/storageService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Dashboard = () => {
@@ -84,6 +83,7 @@ const Dashboard = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      throw new Error(data.error?.message || "customer adding failed");
     } finally {
       setLoading(false);
     }

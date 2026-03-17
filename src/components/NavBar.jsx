@@ -19,7 +19,7 @@ const NavBar = () => {
         navigate("/login", { replace: true });
       }
     } catch (error) {
-      console.log(error);
+      throw new Error(data.error?.message || "Log out failed");
     }
   };
   return (
