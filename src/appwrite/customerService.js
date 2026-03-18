@@ -36,7 +36,10 @@ const customerService = {
   },
   async get_Customers_detail(userId) {
     try {
-      let queries = [Query.orderDesc("$createdAt")];
+      let queries = [
+        Query.orderDesc("$createdAt"),
+        Query.equal("userId", userId),
+      ];
 
       return await databases.listDocuments(
         DATABASE_ID,
