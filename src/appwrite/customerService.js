@@ -36,12 +36,17 @@ const customerService = {
   },
   async get_Customers_detail(userId) {
     try {
-      return await databases.listDocuments(DATABASE_ID, BILL_INFORMATION);
+      let queries = [Query.orderDesc("$createdAt")];
+
+      return await databases.listDocuments(
+        DATABASE_ID,
+        BILL_INFORMATION,
+        queries,
+      );
     } catch (error) {
       return null;
     }
   },
-
   async delete_Customer(customerId) {
     try {
       databases.deleteDocument(DATABASE_ID, BILL_INFORMATION, customerId);
