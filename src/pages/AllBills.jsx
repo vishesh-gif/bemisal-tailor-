@@ -40,16 +40,15 @@ const AllBills = () => {
   };
   const fetchCount = async () => {
     const total = await get_customer_count();
-    if (total) setCount(total);
+    setCount(total);
   };
 
   useEffect(() => {
     if (!customers?.length) {
       allBills();
-      fetchCount();
     }
+    fetchCount();
   }, []);
-  console.log(count);
 
   return (
     <div className="">
@@ -60,7 +59,7 @@ const AllBills = () => {
       <p className="text-lg text-center flex items-center justify-center gap-1 bg-white rounded py-1 font-semibold text-gray-800 mb-4">
         <span>
           <IoPersonSharp className="text-[#3171c9]" />
-        </span>{" "}
+        </span>
         Total customer : {count}
       </p>
 
