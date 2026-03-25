@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FaPhone } from "react-icons/fa6";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import storageService from "../appwrite/storageService";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCrossCircled } from "react-icons/rx";
-import customerService from "../appwrite/customerService";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { deleteCustomer } from "../redux/customers_data_slice";
+import { delete_bills } from "../firebase/services/firebase_bill_service";
 
 const Bill_Card = ({ data, openImage }) => {
   const dispatch = useDispatch();
@@ -15,11 +14,11 @@ const Bill_Card = ({ data, openImage }) => {
 
   const handleClick = async () => {
     setLoading(true);
-    openImage(data?.bill_image_id);
+    openImage(data?.imageUrl);
     setLoading(false);
   };
 
-  const deleletBillImg = async (public_id) => {
+  const deleteBillImg = async (public_id) => {
     try {
       const res = await fetch("/.netlify/functions/delete-image", {
         method: "POST",
@@ -41,13 +40,11 @@ const Bill_Card = ({ data, openImage }) => {
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this item?")) {
       try {
-        deleletBillImg(data.public_id);
-        const customerDetails_Delete = await customerService.delete_Customer(
-          data.$id,
-        );
+        await deleteBillImg(data.publicId);
+        const customerDetails_Delete = await delete_bills(data.id);
 
         if (customerDetails_Delete) {
-          dispatch(deleteCustomer(data.$id));
+          dispatch(deleteCustomer(data.id));
           toast.success("Customer Details deteled");
         }
       } catch (error) {
@@ -60,7 +57,7 @@ const Bill_Card = ({ data, openImage }) => {
     <div className="bg-white shadow-lg rounded-xl flex-col p-4 flex justify-between relative gap-1">
       <div className="flex border-b mb-1 border-gray-200 items-center justify-between">
         <h3 className="text-xl font-semibold mb-2">
-          Bill# <span className="text-blue-600">{data?.billNumber}</span>
+          Bill# <span className="text-blue-600">{data?.billNo}</span>
         </h3>
         <button
           onClick={() => handleDelete()}
@@ -74,17 +71,18 @@ const Bill_Card = ({ data, openImage }) => {
         <span className="text-sm">
           <FaPhone />
         </span>
-        {data?.phoneNumber}
+        {data?.phone}
       </p>
-      <p className="text-sm text-gray-600 flex items-center">
+      <p className="text-sm text-gray-600 flex gap-1 items-center">
         <span>
           <FaRegCalendarAlt />
         </span>
-        {new Date(data?.$createdAt).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        })}
+        {data?.createdAt &&
+          new Date(data?.createdAt).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })}
       </p>
 
       <button

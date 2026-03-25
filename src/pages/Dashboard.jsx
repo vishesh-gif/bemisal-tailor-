@@ -2,21 +2,14 @@ import React, { useState } from "react";
 import InputField from "../utils/InputField";
 import { useForm } from "react-hook-form";
 import imageCompression from "browser-image-compression";
-import customerService from "../appwrite/customerService";
-import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { add_bill } from "../firebase/services/firebase_bill_service";
 
 const Dashboard = () => {
-  const userId = useSelector((state) => state.profileSlice?.userData?.$id);
   const [loading, setLoading] = useState(false);
   const [compressedImage, setCompressedImage] = useState(null);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const handleImage = async (e) => {
     setLoading(true);
@@ -28,13 +21,11 @@ const Dashboard = () => {
   const uploadImage = async (file) => {
     try {
       setLoading(true);
-      // 🔹 Compress image first
       const options = {
         maxSizeMB: 0.2, // 200KB
         maxWidthOrHeight: 800,
         useWebWorker: true,
       };
-
       const compressedFile = await imageCompression(file, options);
 
       // 🔹 Upload compressed image
@@ -49,9 +40,7 @@ const Dashboard = () => {
           body: formData,
         },
       );
-
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.error?.message || "Upload failed");
       }
@@ -72,10 +61,10 @@ const Dashboard = () => {
         return;
       }
 
-      const createCustomer = customerService.create_Customer(userId, {
+      const createCustomer = await add_bill({
         ...data,
-        bill_image_id: compressedImage.secure_url,
-        public_id: compressedImage.public_id,
+        imageUrl: compressedImage.secure_url,
+        publicId: compressedImage.public_id,
       });
       if (createCustomer) toast.success("Customer added");
       reset();
@@ -109,7 +98,7 @@ const Dashboard = () => {
             label="Bill Number"
             type="text"
             placeholder="Enter bill number"
-            {...register("billNumber", {
+            {...register("billNo", {
               required: "billNumber is required",
             })}
           />
@@ -120,7 +109,7 @@ const Dashboard = () => {
             inputMode="numeric"
             pattern="[0-9]*"
             placeholder="Enter phone number"
-            {...register("phoneNumber", {
+            {...register("phone", {
               required: "Phone Number Name is required",
             })}
           />

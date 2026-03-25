@@ -1,17 +1,17 @@
 import React from "react";
 import { MdLogout } from "react-icons/md";
-import auth from "../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../redux/profileSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { logout_user } from "../firebase/services/firebase_auth_service";
 const NavBar = () => {
   const { loginStatus } = useSelector((state) => state.profileSlice);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = async () => {
     try {
-      const log_Out = await auth.logout();
+      const log_Out = await logout_user();
 
       if (log_Out) {
         dispatch(logOut()); // 🔥 update state first

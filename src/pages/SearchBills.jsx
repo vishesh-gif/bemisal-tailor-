@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import InputField from "../utils/InputField";
 import { LuCalendarSearch } from "react-icons/lu";
-import customerService from "../appwrite/customerService";
 import Bill_Card from "../components/Bill_Card";
 import toast from "react-hot-toast";
 import Popup_Image from "../components/Popup_Image";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { search_bills_by_phoneNo } from "../firebase/services/firebase_bill_service";
 const SearchBills = () => {
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,9 +18,10 @@ const SearchBills = () => {
     setLoading(true);
     const timer = setTimeout(async () => {
       try {
-        const customerDetails = await customerService.search_Customer(input);
+        const customerDetails = await search_bills_by_phoneNo(input);
+        console.log(customerDetails);
         if (!customerDetails) toast.error("No Customer found");
-        setData(customerDetails.documents);
+        setData(customerDetails);
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -73,7 +73,7 @@ const SearchBills = () => {
       <section className=" flex flex-col gap-4">
         {data && data.length > 0 ?
           data.map((el) => (
-            <Bill_Card key={el.$id} data={el} openImage={setSelectedImage} />
+            <Bill_Card key={el.id} data={el} openImage={setSelectedImage} />
           ))
         : <div className="text-center">
             {input && loading ?

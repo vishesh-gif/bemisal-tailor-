@@ -73,14 +73,6 @@ const customerService = {
   },
   async search_Customer(phoneNumber) {
     try {
-      // let queries = [];
-      // if (mobile) {
-      //   queries.push(Query.equal("mobile", mobile));
-      // }
-      // if (billNo) {
-      //   queries.push(Query.equal("billNo", billNo));
-      // }
-
       return await databases.listDocuments(DATABASE_ID, BILL_INFORMATION, [
         Query.startsWith("phoneNumber", phoneNumber),
       ]);

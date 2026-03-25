@@ -3,29 +3,27 @@ import InputField from "../utils/InputField";
 import { SlEnvolope } from "react-icons/sl";
 import { TiLockClosed } from "react-icons/ti";
 import { useForm } from "react-hook-form";
-import auth from "../appwrite/auth";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { logIn } from "../redux/profileSlice";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { login_user } from "../firebase/services/firebase_auth_service";
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm();
+  const { register, handleSubmit } = useForm();
   const handleLogin = async (data) => {
     try {
       setLoading(true);
-      const session = await auth.login(data);
-
-      if (session) {
-        const user = await auth.getCurrentUser();
-        dispatch(logIn(user));
+      const user = await login_user(data.email, data.password);
+      if (user) {
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+        };
+        dispatch(logIn(userData));
         setLoading(false);
         navigate("/home/dashboard");
         toast.success("Logged in successfully");

@@ -8,30 +8,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "./redux/profileSlice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import FloatingNavbar from "./components/FloatingNavbar";
+import { observe_User } from "./firebase/services/firebase_auth_service";
 
 const App = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const { loginStatus } = useSelector((state) => state.profileSlice);
   const navigate = useNavigate();
-  const currentUserSession = async () => {
-    try {
-      setLoading(true);
-      const user = await auth.getCurrentUser();
+  useEffect(() => {
+    setLoading(true);
+    const unsubscibe = observe_User((user) => {
       if (user) {
-        dispatch(logIn(user));
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+        };
+        dispatch(logIn(userData));
         navigate("/home/dashboard");
       } else {
         navigate("/login");
       }
-    } catch (error) {
-      console.log("No active session");
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    currentUserSession();
+    });
+    setLoading(false);
+    return () => unsubscibe();
   }, []);
 
   return loading ?
