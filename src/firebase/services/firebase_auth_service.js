@@ -29,10 +29,8 @@ export const logout_user = async () => {
 export const observe_User = (callback) => {
   return onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("Logged In");
       callback(user);
     } else {
-      console.log("No user");
       callback(null);
     }
   });

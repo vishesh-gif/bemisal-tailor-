@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   billData: [],
+  customerCount: 0,
 };
 
 const customers_data_slice = createSlice({
@@ -10,6 +11,9 @@ const customers_data_slice = createSlice({
   reducers: {
     addCustomersData: (state, action) => {
       state.billData = action.payload;
+    },
+    setCustomerCount: (state, action) => {
+      state.customerCount = action.payload;
     },
     deleteCustomer: (state, action) => {
       state.billData = state.billData.filter(
@@ -22,7 +26,11 @@ const customers_data_slice = createSlice({
   },
 });
 
-export const { addCustomersData, deleteCustomer, addMoreBill } =
-  customers_data_slice.actions;
+export const {
+  addCustomersData,
+  deleteCustomer,
+  addMoreBill,
+  setCustomerCount,
+} = customers_data_slice.actions;
 
 export default customers_data_slice.reducer;

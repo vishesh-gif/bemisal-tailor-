@@ -15,21 +15,22 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const { loginStatus } = useSelector((state) => state.profileSlice);
   const navigate = useNavigate();
+
   useEffect(() => {
-    setLoading(true);
     const unsubscibe = observe_User((user) => {
       if (user) {
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-        };
-        dispatch(logIn(userData));
+        dispatch(
+          logIn({
+            uid: user.uid,
+            email: user.email,
+          }),
+        );
         navigate("/home/dashboard");
       } else {
         navigate("/login");
       }
+      setLoading(false);
     });
-    setLoading(false);
     return () => unsubscibe();
   }, []);
 

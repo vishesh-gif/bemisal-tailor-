@@ -19,17 +19,19 @@ const LoginPage = () => {
       setLoading(true);
       const user = await login_user(data.email, data.password);
       if (user) {
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-        };
-        dispatch(logIn(userData));
+        dispatch(
+          logIn({
+            uid: user.uid,
+            email: user.email,
+          }),
+        );
         setLoading(false);
         navigate("/home/dashboard");
         toast.success("Logged in successfully");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
